@@ -3,29 +3,31 @@ import http from "http";
 import cors from "cors";
 import mongoose from "mongoose";
 import { Server } from "socket.io";
+import dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
+
 const io = new Server(server, {
   cors: {
-    origin: "*", // Allow all origins (React frontend)
+    origin: "*",
   },
 });
 
 app.use(cors());
 app.use(express.json());
 
+// MongoDB connection string from .env file
 mongoose
-  .connect(
-    "mongodb+srv://cluster-1:3RVTlJJoizhm1AUZ@cluster1.znix84a.mongodb.net/chat?retryWrites=true&w=majority",
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    }
-  )
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.log("❌ MongoDB Error:", err));
 
+// Message schema and model
 const messageSchema = new mongoose.Schema({
   username: String,
   message: String,
@@ -34,16 +36,17 @@ const messageSchema = new mongoose.Schema({
 
 const Message = mongoose.model("Message", messageSchema);
 
+// GET all messages sorted by time ascending
 app.get("/messages", async (req, res) => {
   try {
     const messages = await Message.find().sort({ timestamp: 1 });
-    console.log("messages:-", messages);
     res.json(messages);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch messages" });
   }
 });
 
+// Socket.IO connection and message handling
 io.on("connection", (socket) => {
   console.log("🟢 User connected");
 
@@ -66,7 +69,7 @@ io.on("connection", (socket) => {
   });
 });
 
-const PORT = 7003;
+const PORT = process.env.PORT || 7003;
 server.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
