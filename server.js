@@ -34,6 +34,7 @@ const Message = mongoose.model("Message", messageSchema);
 app.get("/messages", async (req, res) => {
   try {
     const messages = await Message.find().sort({ timestamp: 1 });
+    console.log("messages:-", messages);
     res.json(messages);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch messages" });
