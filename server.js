@@ -19,6 +19,7 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB connection string from .env file
+
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
