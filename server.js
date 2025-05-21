@@ -20,22 +20,22 @@ app.use(express.json());
 
 // MongoDB connection string from .env file
 
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => console.log("❌ MongoDB Error:", err));
+// mongoose
+//   .connect(process.env.MONGO_URI, {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//   })
+//   .then(() => console.log("✅ MongoDB Connected"))
+//   .catch((err) => console.log("❌ MongoDB Error:", err));
 
-// Message schema and model
-const messageSchema = new mongoose.Schema({
-  username: String,
-  message: String,
-  timestamp: { type: Date, default: Date.now },
-});
+// // Message schema and model
+// const messageSchema = new mongoose.Schema({
+//   username: String,
+//   message: String,
+//   timestamp: { type: Date, default: Date.now },
+// });
 
-const Message = mongoose.model("Message", messageSchema);
+// const Message = mongoose.model("Message", messageSchema);
 
 // GET all messages sorted by time ascending
 app.get("/messages", async (req, res) => {
