@@ -76,6 +76,8 @@
 //   console.log(`🚀 Server running on http://localhost:${PORT}`);
 // });
 
+// No MongoDB in this version
+
 import express from "express";
 import http from "http";
 import cors from "cors";
@@ -93,19 +95,16 @@ const io = new Server(server, {
 app.use(cors());
 app.use(express.json());
 
-// ✅ In-memory message store (no MongoDB)
+// ✅ In-memory message store
 const messages = [];
 
-// ✅ GET all messages
 app.get("/messages", (req, res) => {
-  // Sort by timestamp ascending
   const sortedMessages = messages.sort(
     (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
   );
   res.json(sortedMessages);
 });
 
-// ✅ Socket.IO for chat
 io.on("connection", (socket) => {
   console.log("🟢 User connected");
 
@@ -115,10 +114,8 @@ io.on("connection", (socket) => {
       message: data.message,
       timestamp: new Date(),
     };
-
-    messages.push(newMsg); // Save in memory
-
-    io.emit("chat message", newMsg); // Broadcast to all users
+    messages.push(newMsg);
+    io.emit("chat message", newMsg);
   });
 
   socket.on("disconnect", () => {
@@ -128,5 +125,5 @@ io.on("connection", (socket) => {
 
 const PORT = process.env.PORT || 7003;
 server.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
