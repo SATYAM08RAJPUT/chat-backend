@@ -22,13 +22,25 @@ app.get("/messages", (req, res) => {
   const sortedMessages = messages.sort(
     (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
   );
-  console.log("sortedMessages:-", sortedMessages);
   res.json(sortedMessages);
 });
 
 io.on("connection", (socket) => {
   console.log("🟢 User connected");
 
+  // ✅ When user joins
+  socket.on("join", (username) => {
+    const joinMsg = {
+      username: "System",
+      message: `${username} has joined the chat`,
+      timestamp: new Date(),
+      type: "info",
+    };
+    messages.push(joinMsg);
+    io.emit("user joined", joinMsg);
+  });
+
+  // ✅ Regular chat message
   socket.on("chat message", (data) => {
     const newMsg = {
       username: data.username,
